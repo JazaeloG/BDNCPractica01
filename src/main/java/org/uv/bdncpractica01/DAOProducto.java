@@ -4,6 +4,7 @@
  */
 package org.uv.bdncpractica01;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.Session;
@@ -73,5 +74,13 @@ public class DAOProducto implements IDAOGeneral<PojoProducto, Long>{
         session.delete(producto);
         transaction.commit();
         return true;
+    }
+    
+    public List<PojoProducto> cargarTodosLosProductos() {
+        try {
+            return buscarAll();
+        } catch (Exception e) {
+            return new ArrayList<>(); 
+        }
     }
 }

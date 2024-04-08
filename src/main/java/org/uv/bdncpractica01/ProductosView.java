@@ -4,11 +4,17 @@
  */
 package org.uv.bdncpractica01;
 
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -25,7 +31,8 @@ public class ProductosView extends javax.swing.JFrame {
      */
     public ProductosView() {
         initComponents();
-        String [] columnNames = {"Clave", "Descripcion", "Precio Venta", "Precio Compra"};
+        cargarTablaProductos();
+        /*String [] columnNames = {"Clave", "Descripcion", "Precio Venta", "Precio Compra"};
         List<PojoProducto> lstProducto = daoE.buscarAll();
         pro = new ProductoTableModel<PojoProducto>(columnNames,lstProducto){
             @Override
@@ -39,7 +46,25 @@ public class ProductosView extends javax.swing.JFrame {
                 }
             }
         };
-        jTableProductos.setModel(pro);
+        jTableProductos.setModel(pro);*/
+    }
+    
+    private void cargarTablaProductos() {
+        try {
+            DAOProducto daoProducto = new DAOProducto();
+            List<PojoProducto> productos = daoProducto.cargarTodosLosProductos();
+
+            DefaultTableModel model = (DefaultTableModel) jTableProductos.getModel();
+            model.setRowCount(0); 
+
+            for (PojoProducto producto : productos) {
+                Object[] rowData = {producto.getId(), producto.getDescripcion(), producto.getPrecioVenta(), producto.getPrecioCompra()};
+                model.addRow(rowData);
+            }
+            model.fireTableDataChanged();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar los productos");
+        }
     }
 
     
@@ -68,8 +93,11 @@ public class ProductosView extends javax.swing.JFrame {
         jTIdentificador = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMGuardar = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        jConfirmarGuardado = new javax.swing.JMenuItem();
+        jMModificar = new javax.swing.JMenu();
+        jConfirmarModificacion = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        jMEliminar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,7 +115,7 @@ public class ProductosView extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Tab1", "Tab2", "Tab3", "Tab4"
+                "Clave", "Descripcion", "Precio Venta", "Precio Compra"
             }
         ));
         jScrollPane1.setViewportView(jTableProductos);
@@ -166,12 +194,44 @@ public class ProductosView extends javax.swing.JFrame {
                 jMGuardarActionPerformed(evt);
             }
         });
+
+        jConfirmarGuardado.setText("Confirmar");
+        jConfirmarGuardado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jConfirmarGuardadoActionPerformed(evt);
+            }
+        });
+        jMGuardar.add(jConfirmarGuardado);
+
         jMenuBar1.add(jMGuardar);
 
-        jMenu2.setText("Modificar");
-        jMenuBar1.add(jMenu2);
+        jMModificar.setText("Modificar");
+        jMModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMModificarActionPerformed(evt);
+            }
+        });
+
+        jConfirmarModificacion.setText("Editar Producto");
+        jConfirmarModificacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jConfirmarModificacionActionPerformed(evt);
+            }
+        });
+        jMModificar.add(jConfirmarModificacion);
+
+        jMenuBar1.add(jMModificar);
 
         jMenu3.setText("Eliminar");
+
+        jMEliminar.setText("Confirmar Eliminacion");
+        jMEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMEliminarActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMEliminar);
+
         jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
@@ -209,10 +269,32 @@ public class ProductosView extends javax.swing.JFrame {
     }//GEN-LAST:event_jBBuscarActionPerformed
 
     private void jBVerTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBVerTodosActionPerformed
+        try {
+            DAOProducto daoProducto = new DAOProducto();
+            List<PojoProducto> productos = daoProducto.buscarAll();
 
+            DefaultTableModel model = (DefaultTableModel) jTableProductos.getModel();
+            model.setRowCount(0); 
+            
+            for (PojoProducto producto : productos) {
+                Object[] rowData = {producto.getId(), producto.getDescripcion(), producto.getPrecioVenta(), producto.getPrecioCompra()};
+                model.addRow(rowData);
+            }
+            model.fireTableDataChanged();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al obtener todos los productos");
+        }
     }//GEN-LAST:event_jBVerTodosActionPerformed
 
     private void jMGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGuardarActionPerformed
+        
+    }//GEN-LAST:event_jMGuardarActionPerformed
+
+    private void jMModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMModificarActionPerformed
+        
+    }//GEN-LAST:event_jMModificarActionPerformed
+
+    private void jConfirmarGuardadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jConfirmarGuardadoActionPerformed
         try{      
             PojoProducto producto = new PojoProducto();
             producto.setDescripcion(jTDescripcion.getText());
@@ -225,11 +307,103 @@ public class ProductosView extends javax.swing.JFrame {
             jTDescripcion.setText("");
             jTPrecioCompra.setText("");
             jTPrecioVenta.setText("");
-
+            cargarTablaProductos();
         } catch(HeadlessException | NumberFormatException e){
             JOptionPane.showMessageDialog(this, "Error al intentar agregar Producto");
         }
-    }//GEN-LAST:event_jMGuardarActionPerformed
+    }//GEN-LAST:event_jConfirmarGuardadoActionPerformed
+
+    private void jConfirmarModificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jConfirmarModificacionActionPerformed
+        try {
+            String idString = JOptionPane.showInputDialog(this, "Ingrese el ID del producto a modificar:");
+
+            if (idString == null || idString.trim().isEmpty()) {
+                return;
+            }
+
+            Long id = Long.parseLong(idString);
+            DAOProducto daoProducto = new DAOProducto();
+            PojoProducto producto = daoProducto.buscarById(id);
+
+            if (producto == null) {
+                JOptionPane.showMessageDialog(this, "No se encontró ningún producto con el ID proporcionado.");
+                return;
+            }
+
+            String[] columnNames = {"ID", "Descripción", "Precio Venta", "Precio Compra"};
+            Object[][] rowData = {{producto.getId(), producto.getDescripcion(), producto.getPrecioVenta(), producto.getPrecioCompra()}};
+            JTable table = new JTable(rowData, columnNames);
+            JScrollPane scrollPane = new JScrollPane(table);
+
+            JTextField descripcionField = new JTextField(producto.getDescripcion());
+            JTextField precioVentaField = new JTextField(String.valueOf(producto.getPrecioVenta()));
+            JTextField precioCompraField = new JTextField(String.valueOf(producto.getPrecioCompra()));
+
+            JPanel formPanel = new JPanel(new GridLayout(3, 2));
+            formPanel.add(new JLabel("Descripción:"));
+            formPanel.add(descripcionField);
+            formPanel.add(new JLabel("Precio Venta:"));
+            formPanel.add(precioVentaField);
+            formPanel.add(new JLabel("Precio Compra:"));
+            formPanel.add(precioCompraField);
+            int option = JOptionPane.showConfirmDialog(this, new Object[]{scrollPane, formPanel}, "Modificar Producto", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                String nuevaDescripcion = descripcionField.getText();
+                double nuevoPrecioVenta = Double.parseDouble(precioVentaField.getText());
+                double nuevoPrecioCompra = Double.parseDouble(precioCompraField.getText());
+
+                producto.setDescripcion(nuevaDescripcion);
+                producto.setPrecioVenta(nuevoPrecioVenta);
+                producto.setPrecioCompra(nuevoPrecioCompra);
+
+                if (daoProducto.modificar(producto)) {
+                    cargarTablaProductos();
+                    JOptionPane.showMessageDialog(this, "Producto modificado exitosamente.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al modificar el producto.");
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Ingrese un ID válido y números válidos para los precios.");
+        } catch (HeadlessException e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar modificar el producto.");
+        }
+    }//GEN-LAST:event_jConfirmarModificacionActionPerformed
+
+    private void jMEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMEliminarActionPerformed
+        try {
+            String idString = JOptionPane.showInputDialog(this, "Ingrese el ID del producto a eliminar:");
+
+            if (idString == null || idString.trim().isEmpty()) {
+                return; 
+            }
+
+            Long id = Long.parseLong(idString);
+            DAOProducto daoProducto = new DAOProducto();
+            PojoProducto producto = daoProducto.buscarById(id);
+
+            if (producto == null) {
+                JOptionPane.showMessageDialog(this, "No se encontró ningún producto con el ID proporcionado.");
+                return;
+            }
+            String mensajeConfirmacion = String.format("¿Está seguro que desea eliminar el producto con ID %d y descripción \"%s\"?", producto.getId(), producto.getDescripcion());
+            int confirmacion = JOptionPane.showConfirmDialog(this, mensajeConfirmacion, "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                if (daoProducto.eliminar(producto)) {
+                    cargarTablaProductos();
+                    JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al eliminar el producto.");
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Ingrese un ID válido.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar eliminar el producto.");
+        }
+    }//GEN-LAST:event_jMEliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -270,12 +444,15 @@ public class ProductosView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBBuscar;
     private javax.swing.JButton jBVerTodos;
+    private javax.swing.JMenuItem jConfirmarGuardado;
+    private javax.swing.JMenuItem jConfirmarModificacion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenuItem jMEliminar;
     private javax.swing.JMenu jMGuardar;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMModificar;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
